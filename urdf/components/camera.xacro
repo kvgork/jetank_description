@@ -1,0 +1,157 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- JeTank Camera Mount -->
+
+  <material name="camera_black">
+    <color rgba="0.1 0.1 0.1 1.0"/>
+  </material>
+
+  <xacro:macro name="jetank_camera" params="parent">
+
+    <!-- Camera mount joint -->
+    <joint name="camera_joint" type="fixed">
+      <origin xyz="0.0125 0 -0.0275" rpy="0 0 0"/>
+      <parent link="${parent}"/>
+      <child link="camera_link"/>
+    </joint>
+
+    <link name="camera_link">
+      <visual>
+        <origin xyz="0.0225 0 0" rpy="0 0 0"/>
+        <geometry>
+          <box size="0.045 0.055 0.025"/>
+        </geometry>
+        <material name="camera_black"/>
+      </visual>
+      <collision>
+        <origin xyz="0.0225 0 0" rpy="0 0 0"/>
+        <geometry>
+          <box size="0.045 0.055 0.025"/>
+        </geometry>
+      </collision>
+      <inertial>
+        <mass value="0.05"/>
+        <inertia ixx="0.00001" ixy="0" ixz="0"
+                 iyy="0.00001" iyz="0"
+                 izz="0.00001"/>
+      </inertial>
+    </link>
+
+    <!-- Left camera optical frame -->
+    <joint name="camera_left_optical_joint" type="fixed">
+      <origin xyz="0.045 0.0275 0" rpy="-1.5708 0 -1.5708"/>
+      <parent link="camera_link"/>
+      <child link="camera_left_optical_frame"/>
+    </joint>
+
+    <link name="camera_left_optical_frame"/>
+
+    <!-- Right camera optical frame -->
+    <joint name="camera_right_optical_joint" type="fixed">
+      <origin xyz="0.045 -0.0275 0" rpy="-1.5708 0 -1.5708"/>
+      <parent link="camera_link"/>
+      <child link="camera_right_optical_frame"/>
+    </joint>
+
+    <link name="camera_right_optical_frame"/>
+
+    <!-- Gazebo color -->
+    <gazebo reference="camera_link">
+      <material>Gazebo/Black</material>
+    </gazebo>
+
+    <!-- Gazebo Stereo Camera Sensors (simulation only) -->
+    <!-- Matches IMX219-83 hardware: 640×360, 30fps, 73° FOV, 60mm baseline -->
+
+    <!-- LEFT CAMERA -->
+    <gazebo reference="camera_left_optical_frame">
+      <sensor name="stereo_camera_left" type="camera">
+        <update_rate>30.0</update_rate>
+        <camera name="left">
+          <horizontal_fov>1.274</horizontal_fov>  <!-- 73° in radians -->
+          <image>
+            <width>640</width>
+            <height>360</height>
+            <format>RGB_INT8</format>
+          </image>
+          <clip>
+            <near>0.02</near>
+            <far>10.0</far>
+          </clip>
+          <noise>
+            <type>gaussian</type>
+            <mean>0.0</mean>
+            <stddev>0.007</stddev>  <!-- Realistic sensor noise -->
+          </noise>
+          <lens>
+            <type>custom</type>
+            <custom_function>
+              <c1>1.05</c1>
+              <c2>4</c2>
+              <f>1.0</f>
+              <fun>tan</fun>
+            </custom_function>
+            <scale_to_hfov>true</scale_to_hfov>
+          </lens>
+        </camera>
+        <plugin name="camera_left_driver" filename="libgazebo_ros_camera.so">
+          <ros>
+            <namespace>stereo_camera</namespace>
+          </ros>
+          <camera_name>left</camera_name>
+          <frame_name>camera_left_optical_frame</frame_name>
+          <hack_baseline>0.0</hack_baseline>  <!-- Left camera is baseline reference -->
+          <min_depth>0.2</min_depth>
+          <max_depth>2.0</max_depth>
+        </plugin>
+      </sensor>
+    </gazebo>
+
+    <!-- RIGHT CAMERA -->
+    <gazebo reference="camera_right_optical_frame">
+      <sensor name="stereo_camera_right" type="camera">
+        <update_rate>30.0</update_rate>
+        <camera name="right">
+          <horizontal_fov>1.274</horizontal_fov>  <!-- 73° in radians -->
+          <image>
+            <width>640</width>
+            <height>360</height>
+            <format>RGB_INT8</format>
+          </image>
+          <clip>
+            <near>0.02</near>
+            <far>10.0</far>
+          </clip>
+          <noise>
+            <type>gaussian</type>
+            <mean>0.0</mean>
+            <stddev>0.007</stddev>  <!-- Realistic sensor noise -->
+          </noise>
+          <lens>
+            <type>custom</type>
+            <custom_function>
+              <c1>1.05</c1>
+              <c2>4</c2>
+              <f>1.0</f>
+              <fun>tan</fun>
+            </custom_function>
+            <scale_to_hfov>true</scale_to_hfov>
+          </lens>
+        </camera>
+        <plugin name="camera_right_driver" filename="libgazebo_ros_camera.so">
+          <ros>
+            <namespace>stereo_camera</namespace>
+          </ros>
+          <camera_name>right</camera_name>
+          <frame_name>camera_right_optical_frame</frame_name>
+          <hack_baseline>0.06267</hack_baseline>  <!-- Baseline from stereo_calibration.yaml (62.67mm) -->
+          <min_depth>0.2</min_depth>
+          <max_depth>2.0</max_depth>
+        </plugin>
+      </sensor>
+    </gazebo>
+
+  </xacro:macro>
+
+</robot>
