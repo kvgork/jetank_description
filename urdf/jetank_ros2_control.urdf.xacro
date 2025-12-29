@@ -1,0 +1,77 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="jetank">
+
+  <!-- JeTank Robot with ros2_control Integration -->
+
+  <!-- Arguments -->
+  <xacro:arg name="use_sim" default="false"/>
+  <xacro:arg name="use_ros2_control" default="true"/>
+
+  <!-- Import component macros -->
+  <xacro:include filename="$(find jetank_description)/urdf/components/arm.xacro"/>
+  <xacro:include filename="$(find jetank_description)/urdf/components/camera.xacro"/>
+  <xacro:include filename="$(find jetank_description)/urdf/components/gripper.xacro"/>
+  <xacro:include filename="$(find jetank_description)/urdf/components/wheels.xacro"/>
+
+  <!-- Import ros2_control configuration -->
+  <xacro:if value="$(arg use_ros2_control)">
+    <xacro:include filename="$(find jetank_motor_control)/config/ros2_control.xacro"/>
+  </xacro:if>
+
+  <!-- Base footprint (ground reference) -->
+  <link name="base_footprint"/>
+
+  <joint name="base_footprint_joint" type="fixed">
+    <origin xyz="0 0 0.03" rpy="0 0 0"/>
+    <parent link="base_footprint"/>
+    <child link="base_link"/>
+  </joint>
+
+  <!-- Base link / Chassis -->
+  <link name="base_link"/>
+
+  <joint name="base_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="chassis"/>
+    <origin xyz="0 0 0.0275" rpy="0 0 0"/>
+  </joint>
+
+  <link name="chassis">
+    <visual>
+      <geometry>
+        <box size="0.15 0.12 0.05"/>
+      </geometry>
+      <material name="chassis_grey">
+        <color rgba="0.3 0.3 0.3 1"/>
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="0.15 0.12 0.05"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="0.8"/>
+      <inertia ixx="0.002" ixy="0" ixz="0"
+               iyy="0.003" iyz="0"
+               izz="0.004"/>
+    </inertial>
+  </link>
+
+  <!-- Instantiate components -->
+  <xacro:jetank_arm parent="chassis"/>
+  <xacro:jetank_gripper parent="S5_link"/>
+  <xacro:jetank_camera parent="S1_link"/>
+  <xacro:jetank_wheels parent="chassis"/>
+
+  <!-- ros2_control (conditional) -->
+  <xacro:if value="$(arg use_ros2_control)">
+    <xacro:jetank_ros2_control use_sim="$(arg use_sim)"/>
+  </xacro:if>
+
+  <!-- Gazebo properties -->
+  <gazebo reference="chassis">
+    <material>Gazebo/DarkGrey</material>
+  </gazebo>
+
+</robot>
