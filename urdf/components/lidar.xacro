@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- RPLidar macro for adding LiDAR sensor to robot -->
+  <!-- C1M1 dimensions: 56mm diameter x 41mm height -->
+  <xacro:macro name="rplidar" params="parent x y z">
+
+    <link name="laser">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <cylinder radius="0.028" length="0.041"/>
+        </geometry>
+        <material name="lidar_black">
+          <color rgba="0.1 0.1 0.1 1.0"/>
+        </material>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <cylinder radius="0.028" length="0.041"/>
+        </geometry>
+      </collision>
+      <inertial>
+        <mass value="0.190"/>  <!-- C1M1 weight: ~190g -->
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <inertia ixx="0.0001" ixy="0" ixz="0" iyy="0.0001" iyz="0" izz="0.0001"/>
+      </inertial>
+    </link>
+
+    <joint name="laser_joint" type="fixed">
+      <parent link="${parent}"/>
+      <child link="laser"/>
+      <origin xyz="${x} ${y} ${z}" rpy="0 0 0"/>
+    </joint>
+
+  </xacro:macro>
+
+</robot>

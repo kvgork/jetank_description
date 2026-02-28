@@ -1,11 +1,17 @@
 <?xml version="1.0"?>
 <robot name="jetank" xmlns:xacro="http://www.ros.org/wiki/xacro">
-  
-  <xacro:include filename="$(find jetank_ros2_main)/urdf/properties.xacro"/>
-  <xacro:include filename="$(find jetank_ros2_main)/urdf/jetank_wheel.xacro"/>
-  <xacro:include filename="$(find jetank_ros2_main)/urdf/jetank_arm.xacro"/>
-  <xacro:include filename="$(find jetank_ros2_main)/urdf/jetank_gripper.xacro"/>
-  <xacro:include filename="$(find jetank_ros2_main)/urdf/jetank_camera.xacro"/>
+
+  <xacro:include filename="$(find jetank_description)/urdf/properties.xacro"/>
+  <xacro:include filename="$(find jetank_description)/urdf/jetank_wheel.xacro"/>
+  <xacro:include filename="$(find jetank_description)/urdf/jetank_arm.xacro"/>
+  <xacro:include filename="$(find jetank_description)/urdf/jetank_gripper.xacro"/>
+  <xacro:include filename="$(find jetank_description)/urdf/jetank_camera.xacro"/>
+
+  <!-- RPLidar arguments (optional hardware LiDAR) -->
+  <xacro:arg name="use_rplidar" default="false"/>
+  <xacro:arg name="rplidar_x" default="0.0"/>
+  <xacro:arg name="rplidar_y" default="0.0"/>
+  <xacro:arg name="rplidar_z" default="0.05"/>  <!-- Above chassis top -->
   
 
   <!-- Base link -->
@@ -44,5 +50,14 @@
 
   <xacro:wheel prefix="left_back" x="${-((chassis_length/2)-(0.02+wheel_radius))}" y="${-((chassis_width / 2)+(wheel_length/2))}" z="${-wheel_radius}"/>
   <xacro:wheel prefix="right_back" x="${-((chassis_length/2)-(0.02+wheel_radius))}" y="${((chassis_width / 2)+(wheel_length/2))}" z="${-wheel_radius}"/>
+
+  <!-- Conditional RPLidar (hardware LiDAR) -->
+  <xacro:if value="$(arg use_rplidar)">
+    <xacro:include filename="$(find jetank_description)/urdf/components/lidar.xacro"/>
+    <xacro:rplidar parent="chassis"
+                   x="$(arg rplidar_x)"
+                   y="$(arg rplidar_y)"
+                   z="$(arg rplidar_z)"/>
+  </xacro:if>
 
 </robot>
