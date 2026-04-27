@@ -31,7 +31,7 @@
     <joint name="laser_joint" type="fixed">
       <parent link="${parent}"/>
       <child link="laser"/>
-      <origin xyz="${x} ${y} ${z}" rpy="0 0 0"/>
+      <origin xyz="${x} ${y} ${z}" rpy="0 0 ${pi}"/>
     </joint>
 
   </xacro:macro>
