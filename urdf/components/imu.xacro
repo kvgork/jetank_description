@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!--
+    ICM-20948 IMU sensor component.
+    This IMU is integrated into the Waveshare IMX219-83 Stereo Camera module,
+    providing 9-axis (accelerometer, gyroscope, magnetometer) motion sensing.
+    It is physically co-located with the stereo camera on the robot arm.
+  -->
+
+  <xacro:macro name="imu_sensor" params="parent x y z">
+
+    <link name="imu_link">
+      <visual>
+        <geometry>
+          <!-- Small box representing the ICM-20948 IMU chip (3mm x 3mm x 1mm) -->
+          <box size="0.003 0.003 0.001"/>
+        </geometry>
+        <material name="imu_green">
+          <color rgba="0.1 0.6 0.1 1.0"/>
+        </material>
+      </visual>
+      <inertial>
+        <mass value="0.003"/>
+        <inertia ixx="1e-6" ixy="0.0" ixz="0.0"
+                 iyy="1e-6" iyz="0.0"
+                 izz="1e-6"/>
+      </inertial>
+    </link>
+
+    <joint name="imu_joint" type="fixed">
+      <parent link="${parent}"/>
+      <child link="imu_link"/>
+      <origin xyz="${x} ${y} ${z}" rpy="0 0 0"/>
+    </joint>
+
+  </xacro:macro>
+
+</robot>

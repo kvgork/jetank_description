@@ -6,10 +6,11 @@
   <xacro:include filename="$(find jetank_description)/urdf/jetank_arm.xacro"/>
   <xacro:include filename="$(find jetank_description)/urdf/jetank_gripper.xacro"/>
   <xacro:include filename="$(find jetank_description)/urdf/jetank_camera.xacro"/>
+  <xacro:include filename="$(find jetank_description)/urdf/components/imu.xacro"/>
 
   <!-- RPLidar arguments (optional hardware LiDAR) -->
-  <xacro:arg name="use_rplidar" default="false"/>
-  <xacro:arg name="rplidar_x" default="0.0"/>
+  <xacro:arg name="use_rplidar" default="true"/>
+  <xacro:arg name="rplidar_x" default="-0.05"/>
   <xacro:arg name="rplidar_y" default="0.0"/>
   <xacro:arg name="rplidar_z" default="0.05"/>  <!-- Above chassis top -->
   
@@ -50,6 +51,9 @@
 
   <xacro:wheel prefix="left_back" x="${-((chassis_length/2)-(0.02+wheel_radius))}" y="${-((chassis_width / 2)+(wheel_length/2))}" z="${-wheel_radius}"/>
   <xacro:wheel prefix="right_back" x="${-((chassis_length/2)-(0.02+wheel_radius))}" y="${((chassis_width / 2)+(wheel_length/2))}" z="${-wheel_radius}"/>
+
+  <!-- IMU sensor (co-located with stereo camera on camera base plate) -->
+  <xacro:imu_sensor parent="camera_base_plate_link" x="0.0" y="0.0" z="0.0"/>
 
   <!-- Conditional RPLidar (hardware LiDAR) -->
   <xacro:if value="$(arg use_rplidar)">
