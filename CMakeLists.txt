@@ -11,25 +11,15 @@ find_package(ament_cmake REQUIRED)
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
 
-# Install URDF files
-install(DIRECTORY urdf/
-  DESTINATION share/${PROJECT_NAME}/urdf
-)
-
-# Install mesh files
-install(DIRECTORY meshes/
-  DESTINATION share/${PROJECT_NAME}/meshes
-)
-
-# Install launch files
-install(DIRECTORY launch/
-  DESTINATION share/${PROJECT_NAME}/launch
-)
-
-# Install config files
-install(DIRECTORY config/
-  DESTINATION share/${PROJECT_NAME}/config
-)
+# Install resource directories. Each is installed only if present so the
+# package builds cleanly when optional dirs (meshes/launch/config) are absent.
+foreach(_dir urdf meshes launch config)
+  if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${_dir}")
+    install(DIRECTORY ${_dir}/
+      DESTINATION share/${PROJECT_NAME}/${_dir}
+    )
+  endif()
+endforeach()
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
