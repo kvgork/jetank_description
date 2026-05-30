@@ -143,14 +143,14 @@
       </inertial>
     </link>
 
-    <!-- S4 Joint - Wrist pitch (maps to Servo ID 4) -->
-    <joint name="S4_joint" type="revolute">
+    <!-- S4 Joint - Wrist pitch. FIXED: Servo ID 4 is repurposed to drive the
+         gripper, so the wrist pitch is not actuated. Modelling it as fixed
+         keeps the 'arm' planning chain a clean 4-DOF (S1, S2, S3, S5) group
+         that matches ros2_control, the arm_controller, and the SRDF poses. -->
+    <joint name="S4_joint" type="fixed">
       <origin xyz="0.09 0 0" rpy="0 0 0"/>
       <parent link="S3_link"/>
       <child link="S4_link"/>
-      <axis xyz="0 1 0"/>
-      <limit lower="-1.57" upper="1.57" effort="0.5" velocity="1.57"/>
-      <dynamics damping="0.05" friction="0.05"/>
     </joint>
 
     <link name="S4_link">

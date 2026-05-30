@@ -6,6 +6,9 @@
   <!-- Arguments -->
   <xacro:arg name="use_sim" default="false"/>
   <xacro:arg name="use_ros2_control" default="true"/>
+  <!-- hardware backend when use_sim is false: mock | serial (default mock,
+       so MoveIt can drive the arm in software with no motors connected). -->
+  <xacro:arg name="hardware" default="mock"/>
 
   <!-- Import component macros -->
   <xacro:include filename="$(find jetank_description)/urdf/components/arm.xacro"/>
@@ -66,7 +69,7 @@
 
   <!-- ros2_control (conditional) -->
   <xacro:if value="$(arg use_ros2_control)">
-    <xacro:jetank_ros2_control use_sim="$(arg use_sim)"/>
+    <xacro:jetank_ros2_control use_sim="$(arg use_sim)" hardware="$(arg hardware)"/>
   </xacro:if>
 
   <!-- Gazebo properties -->
