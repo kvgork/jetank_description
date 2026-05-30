@@ -12,6 +12,8 @@
   <xacro:include filename="$(find jetank_description)/urdf/components/camera.xacro"/>
   <xacro:include filename="$(find jetank_description)/urdf/components/gripper.xacro"/>
   <xacro:include filename="$(find jetank_description)/urdf/components/wheels.xacro"/>
+  <xacro:include filename="$(find jetank_description)/urdf/components/lidar.xacro"/>
+  <xacro:include filename="$(find jetank_description)/urdf/components/imu.xacro"/>
 
   <!-- Import ros2_control configuration -->
   <xacro:if value="$(arg use_ros2_control)">
@@ -63,6 +65,10 @@
   <xacro:jetank_gripper parent="S5_link"/>
   <xacro:jetank_camera parent="S1_link"/>
   <xacro:jetank_wheels parent="chassis"/>
+
+  <!-- Lidar (mounted on chassis top) + IMU (co-located with camera module). -->
+  <xacro:rplidar parent="chassis" x="-0.05" y="0.0" z="0.05"/>
+  <xacro:imu_sensor parent="camera_link" x="0.0" y="0.0" z="0.0"/>
 
   <!-- ros2_control (conditional) -->
   <xacro:if value="$(arg use_ros2_control)">
