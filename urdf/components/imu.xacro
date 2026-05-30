@@ -34,6 +34,29 @@
       <origin xyz="${x} ${y} ${z}" rpy="0 0 0"/>
     </joint>
 
+    <!-- Gazebo (Ignition Fortress) IMU sensor. Real hardware ignores <gazebo>
+         tags. Requires the Imu system to be loaded in the world. -->
+    <gazebo reference="imu_link">
+      <sensor name="imu_sensor" type="imu">
+        <topic>imu</topic>
+        <ignition_frame_id>imu_link</ignition_frame_id>
+        <update_rate>100</update_rate>
+        <always_on>true</always_on>
+        <imu>
+          <angular_velocity>
+            <x><noise type="gaussian"><mean>0.0</mean><stddev>0.0002</stddev></noise></x>
+            <y><noise type="gaussian"><mean>0.0</mean><stddev>0.0002</stddev></noise></y>
+            <z><noise type="gaussian"><mean>0.0</mean><stddev>0.0002</stddev></noise></z>
+          </angular_velocity>
+          <linear_acceleration>
+            <x><noise type="gaussian"><mean>0.0</mean><stddev>0.017</stddev></noise></x>
+            <y><noise type="gaussian"><mean>0.0</mean><stddev>0.017</stddev></noise></y>
+            <z><noise type="gaussian"><mean>0.0</mean><stddev>0.017</stddev></noise></z>
+          </linear_acceleration>
+        </imu>
+      </sensor>
+    </gazebo>
+
   </xacro:macro>
 
 </robot>

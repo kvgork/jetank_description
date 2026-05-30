@@ -67,6 +67,8 @@
     <!-- LEFT CAMERA -->
     <gazebo reference="camera_left_optical_frame">
       <sensor name="stereo_camera_left" type="camera">
+        <topic>stereo_camera/left/image_raw</topic>
+        <ignition_frame_id>camera_left_optical_frame</ignition_frame_id>
         <update_rate>30.0</update_rate>
         <camera name="left">
           <horizontal_fov>1.274</horizontal_fov>  <!-- 73° in radians -->
@@ -102,6 +104,8 @@
     <!-- RIGHT CAMERA -->
     <gazebo reference="camera_right_optical_frame">
       <sensor name="stereo_camera_right" type="camera">
+        <topic>stereo_camera/right/image_raw</topic>
+        <ignition_frame_id>camera_right_optical_frame</ignition_frame_id>
         <update_rate>30.0</update_rate>
         <camera name="right">
           <horizontal_fov>1.274</horizontal_fov>  <!-- 73° in radians -->
