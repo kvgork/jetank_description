@@ -34,10 +34,14 @@ base_footprint → base_link → chassis ─┬─ jetank_arm (S1..S5)
 
 These are **verified in sim** and need URDF edits:
 
-1. **IMU is mounted on the arm.** `jetank_ros2_control.urdf.xacro:71` mounts
-   `imu_sensor` on `camera_link`, which is a child of `S1_link` (the rotating
-   arm base, line 66). The IMU therefore **moves with the arm**, corrupting any
-   EKF/SLAM/Nav2 orientation fusion. **Fix:** mount on `chassis` or `base_link`.
+1. **IMU moves with the arm (matches hardware — not a URDF bug).**
+   `jetank_ros2_control.urdf.xacro:71` mounts `imu_sensor` on `camera_link`, a
+   child of `S1_link` (the rotating arm base, line 66). This is **physically
+   accurate** — the real IMU is bolted to the camera, so the model is correct and
+   should stay as-is. Caveat for fusion: because the IMU rides the arm, its
+   orientation is **only valid for EKF/SLAM/Nav2 when the arm is parked**. If you
+   need a base-fixed IMU for continuous fusion, that's a *hardware* change (relocate
+   the sensor), not a model fix.
 
 2. **Camera gz sensor referenced to the optical frame.** `components/camera.xacro:68,105`
    put the `<sensor type="camera">` on `camera_{left,right}_optical_frame`, which
