@@ -38,18 +38,20 @@
       </inertial>
     </link>
 
-    <!-- Left camera optical frame -->
+    <!-- Left camera optical frame.
+         Ignition's camera images along the frame +X. rpy="0 0 0" points
+         +X forward (the view direction) and rolls -90 deg about it. -->
     <joint name="camera_left_optical_joint" type="fixed">
-      <origin xyz="0.045 0.0275 0" rpy="-1.5708 0 -1.5708"/>
+      <origin xyz="0.045 0.0275 0" rpy="0 0 0"/>
       <parent link="camera_link"/>
       <child link="camera_left_optical_frame"/>
     </joint>
 
     <link name="camera_left_optical_frame"/>
 
-    <!-- Right camera optical frame -->
+    <!-- Right camera optical frame (see left frame note). -->
     <joint name="camera_right_optical_joint" type="fixed">
-      <origin xyz="0.045 -0.0275 0" rpy="-1.5708 0 -1.5708"/>
+      <origin xyz="0.045 -0.0275 0" rpy="0 0 0"/>
       <parent link="camera_link"/>
       <child link="camera_right_optical_frame"/>
     </joint>
