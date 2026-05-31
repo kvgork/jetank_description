@@ -48,21 +48,21 @@
 
     <link name="gripper_left_link">
       <visual>
-        <origin xyz="0 0.015 0" rpy="0 0 0"/>
+        <origin xyz="0.04 0 0" rpy="1.5708 0 0"/>
         <geometry>
-          <box size="0.01 0.03 0.04"/>
+          <box size="0.04 0.01 0.03"/>
         </geometry>
         <material name="gripper_dark"/>
       </visual>
       <collision>
-        <origin xyz="0 0.015 0" rpy="0 0 0"/>
+        <origin xyz="0.04 0 0" rpy="1.5708 0 0"/>
         <geometry>
-          <box size="0.01 0.03 0.04"/>
+          <box size="0.04 0.01 0.03"/>
         </geometry>
       </collision>
       <inertial>
         <mass value="0.01"/>
-        <origin xyz="0 0.015 0"/>
+        <origin xyz="0.04 0 0"/>
         <inertia ixx="0.0000005" ixy="0" ixz="0"
                  iyy="0.0000005" iyz="0"
                  izz="0.0000005"/>
@@ -82,21 +82,21 @@
 
     <link name="gripper_right_link">
       <visual>
-        <origin xyz="0 -0.015 0" rpy="0 0 0"/>
+        <origin xyz="0.04 0 0" rpy="1.5708 0 0"/>
         <geometry>
-          <box size="0.01 0.03 0.04"/>
+          <box size="0.04 0.01 0.03"/>
         </geometry>
         <material name="gripper_dark"/>
       </visual>
       <collision>
-        <origin xyz="0 -0.015 0" rpy="0 0 0"/>
+        <origin xyz="0.04 0 0" rpy="1.5708 0 0"/>
         <geometry>
-          <box size="0.01 0.03 0.04"/>
+          <box size="0.04 0.01 0.03"/>
         </geometry>
       </collision>
       <inertial>
         <mass value="0.01"/>
-        <origin xyz="0 -0.015 0"/>
+        <origin xyz="0.04 0 0"/>
         <inertia ixx="0.0000005" ixy="0" ixz="0"
                  iyy="0.0000005" iyz="0"
                  izz="0.0000005"/>
