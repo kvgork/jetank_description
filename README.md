@@ -58,3 +58,43 @@ These are **verified in sim** and need URDF edits:
      mirrored — confirm it matches the physical RPLidar zero).
    - Camera mounted on `S1_link` (arm) means the camera view swings with the
      arm — confirm intended vs. a fixed chassis/mast mount.
+
+---
+
+## ROS 2 API
+
+`jetank_description` is a **pure robot-description package** (ament_cmake). It contains **no runtime nodes, executables, launch files, or message/service/action definitions of its own** — there is no `src/`, `launch/`, `scripts/`, Python module, or `msg/`/`srv/`/`action/` directory. It therefore publishes/subscribes to **no ROS 2 topics directly** and exposes no services or actions.
+
+What it provides is the URDF/xacro robot model (primitive geometry, no meshes), consumed by `robot_state_publisher`, RViz, MoveIt 2 and Gazebo (Fortress/Ignition) in sibling packages.
+
+### Provided artifacts
+
+| Type | Path | Notes |
+|---|---|---|
+| Top-level entrypoint | `urdf/jetank_ros2_control.urdf.xacro` | Main robot model with `ros2_control` integration |
+| Robot/component xacros | `urdf/jetank.xacro`, `urdf/components/{arm,gripper,wheels,camera,lidar,imu}.xacro` | Component macros |
+| Sensor gz blocks | `urdf/components/{camera,lidar,imu}.xacro`, `urdf/sensors.gazebo` | Ignition `<sensor>` definitions |
+| Materials / properties | `urdf/materials.xacro`, `urdf/properties.xacro`, `urdf/jetank_parameters.xacro`, `urdf/macros.xacro` | Shared xacro definitions |
+| Static test URDF | `urdf/jetank_test.urdf`, `urdf/moveit_urdf.urdf` | Pre-expanded URDF snapshots |
+
+The CMakeLists installs `urdf/`, `meshes/`, `launch/`, `config/` only if present; only `urdf/` exists in the tree.
+
+### Top-level xacro arguments (`urdf/jetank_ros2_control.urdf.xacro`)
+
+| Arg | Default | Effect |
+|---|---|---|
+| `use_sim` | `false` | `true` ⇒ `ign_ros2_control/IgnitionSystem`; `false` ⇒ `jetank_motor_control/JetankSerialHardware` hardware interface |
+| `use_ros2_control` | `true` | Includes the `ros2_control` block + `jetank_motor_control/config/ros2_control.xacro` |
+
+### Sensor topics declared in the model (Gazebo/Ignition transport)
+
+These are **not** topics this package's nodes publish (it has none) — they are `<topic>` names inside the URDF `<sensor>` blocks. They are bridged to ROS 2 by the simulation/bridge configuration in sibling packages and exist **only in simulation**.
+
+| Sensor | gz topic | Ignition frame id | Update rate | Config |
+|---|---|---|---|---|
+| 2D lidar (`gpu_lidar`, name `rplidar`) | `scan` | `laser` | 10 Hz | 360 samples, range 0.18–12.0 m (`components/lidar.xacro`) |
+| IMU (`imu_sensor`) | `imu` | `imu_link` | 100 Hz | `components/imu.xacro` |
+| Stereo camera left (`stereo_camera_left`) | `stereo_camera/left/image_raw` | `camera_left_optical_frame` | 30 Hz | 640×360 (`components/camera.xacro`) |
+| Stereo camera right (`stereo_camera_right`) | `stereo_camera/right/image_raw` | `camera_right_optical_frame` | 30 Hz | 640×360 (`components/camera.xacro`) |
+
+ROS 2 message types (e.g. `sensor_msgs/LaserScan`, `sensor_msgs/Imu`, `sensor_msgs/Image`) and the final remapped ROS topic names depend on the ros_gz bridge in `jetank_simulation`, which is outside this package — verify there for the actual ROS-side wire names.
