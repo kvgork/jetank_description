@@ -72,11 +72,19 @@
     </link>
 
     <!-- Right finger (mirrored).
-         The URDF <mimic> tag is intentionally REMOVED here. The ros2_control
-         resource manager's native mimic mechanism (param name="mimic" in
-         ros2_control.xacro) mirrors gripper_right to gripper_left without
-         creating a Gazebo physics mimic constraint that would oppose the
-         GripperActionController's position commands. -->
+         URDF <mimic> tag RESTORED: robot_state_publisher reads this to compute
+         gripper_right_link TF and MoveIt needs the real URDF joint model.
+         The ros2_control native mimic params (<param name="mimic">) are REMOVED
+         from ros2_control.xacro because gz_ros2_control appends "_mimic" to the
+         published state interface name, producing "gripper_right_joint_mimic" in
+         /joint_states instead of the real URDF name "gripper_right_joint".
+
+         Physics: Gazebo Fortress may or may not enforce the URDF <mimic>
+         constraint. If it does (with effort=5 N this is plausible), both fingers
+         move together. If not, the right finger stays at 0 in physics but RSP
+         still shows the correct TF (mirrored from left joint via the URDF mimic).
+         Either way /joint_states carries "gripper_right_joint" (not _mimic) and
+         MoveIt's joint-not-found spam is eliminated. -->
     <joint name="gripper_right_joint" type="prismatic">
       <origin xyz="0 -0.04 0" rpy="0 0 0"/>
       <parent link="gripper_base_link"/>
@@ -85,6 +93,7 @@
       <!-- effort raised to 5 N (was 0.5) — consistent with left finger -->
       <limit lower="0.0" upper="0.04" effort="5.0" velocity="0.5"/>
       <dynamics damping="0.01" friction="0.0"/>
+      <mimic joint="gripper_left_joint" multiplier="1.0" offset="0"/>
     </joint>
 
     <link name="gripper_right_link">
