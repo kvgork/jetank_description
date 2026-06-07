@@ -98,3 +98,32 @@ These are **not** topics this package's nodes publish (it has none) — they are
 | Stereo camera right (`stereo_camera_right`) | `stereo_camera/right/image_raw` | `camera_right_optical_frame` | 30 Hz | 640×360 (`components/camera.xacro`) |
 
 ROS 2 message types (e.g. `sensor_msgs/LaserScan`, `sensor_msgs/Imu`, `sensor_msgs/Image`) and the final remapped ROS topic names depend on the ros_gz bridge in `jetank_simulation`, which is outside this package — verify there for the actual ROS-side wire names.
+
+## Tests
+
+`test/test_urdf.py` exercises the package deliverable — it expands the shipped
+xacro models to URDF via the `xacro` API (no ROS runtime) and asserts on the
+resulting XML:
+
+- **`test_jetank_xacro_expands_to_robot`** — `jetank.xacro` expands to a
+  non-empty `<robot>` with core/component links (`base_link`, `chassis`,
+  `imu_link`, `camera_base_plate_link`, `arm_base_link`, `gripper_base_link`,
+  `laser`) and exactly **6** `*_wheel` links.
+- **`test_top_entrypoint_expands_without_ros2_control`** — the top entrypoint
+  `jetank_ros2_control.urdf.xacro` (with `use_ros2_control:=false`, so it stays
+  self-contained and pulls in no sibling package) expands and contains the core
+  frames plus the full `S1..S5` arm chain.
+- **`test_robot_name_is_jetank`** (parametrized over both entrypoints) — the
+  `<robot>` root is named `jetank` (the name consumed by RViz/MoveIt/Gazebo).
+
+Wired via `ament_cmake_pytest` in `CMakeLists.txt`.
+
+Run them:
+
+```bash
+# standalone pytest
+pixi run -- bash -c 'cd src/jetank_description && python -m pytest test/ -q'
+# under colcon
+colcon test --packages-select jetank_description
+colcon test-result --verbose
+```
