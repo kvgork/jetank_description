@@ -7,9 +7,6 @@ endif()
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
-# uncomment the following section in order to fill in
-# further dependencies manually.
-# find_package(<dependency> REQUIRED)
 
 # Install resource directories. Each is installed only if present so the
 # package builds cleanly when optional dirs (meshes/launch/config) are absent.
@@ -31,6 +28,10 @@ if(BUILD_TESTING)
   # a copyright and license is added to all source files
   set(ament_cmake_cpplint_FOUND TRUE)
   ament_lint_auto_find_test_dependencies()
+
+  # Verify the xacro robot model expands to valid URDF (the package deliverable).
+  find_package(ament_cmake_pytest REQUIRED)
+  ament_add_pytest_test(test_urdf test/test_urdf.py)
 endif()
 
 ament_package()
