@@ -37,8 +37,11 @@
     </link>
 
     <!-- Left finger -->
+    <!-- Origin Y=0.018 (was 0.04): at q=0 the finger plates (half-width 0.015)
+         nearly meet (~6 mm gap) = CLOSED/gripping; at q=0.04 they open ~8 cm.
+         Previously q=0 left a ~5 cm gap so "closed" never looked closed. -->
     <joint name="gripper_left_joint" type="prismatic">
-      <origin xyz="0 0.04 0" rpy="0 0 0"/>
+      <origin xyz="0 0.018 0" rpy="0 0 0"/>
       <parent link="gripper_base_link"/>
       <child link="gripper_left_link"/>
       <axis xyz="0 1 0"/>
@@ -71,7 +74,8 @@
       </inertial>
     </link>
 
-    <!-- Right finger (mirrored).
+    <!-- Right finger (mirrored). Origin Y=-0.018 to match the left finger. -->
+    <!-- ORIGINAL_NOTE:
          URDF <mimic> tag RESTORED: robot_state_publisher reads this to compute
          gripper_right_link TF and MoveIt needs the real URDF joint model.
          The ros2_control native mimic params (<param name="mimic">) are REMOVED
@@ -86,7 +90,7 @@
          Either way /joint_states carries "gripper_right_joint" (not _mimic) and
          MoveIt's joint-not-found spam is eliminated. -->
     <joint name="gripper_right_joint" type="prismatic">
-      <origin xyz="0 -0.04 0" rpy="0 0 0"/>
+      <origin xyz="0 -0.018 0" rpy="0 0 0"/>
       <parent link="gripper_base_link"/>
       <child link="gripper_right_link"/>
       <axis xyz="0 -1 0"/>
