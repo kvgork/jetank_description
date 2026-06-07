@@ -78,12 +78,15 @@
     </link>
 
     <!-- S2 Joint - Shoulder pitch (maps to Servo ID 2) -->
+    <!-- S2=0 points the upper arm UP. +S2 swings it forward. Upper limit raised
+         to +2.356 (135deg) so it can rotate ~45deg PAST horizontal-forward,
+         pointing the upper arm forward-and-down for low/floor reach. -->
     <joint name="S2_joint" type="revolute">
       <origin xyz="0.0075 0 0.0275" rpy="0 -1.5708 0"/>
       <parent link="S1_link"/>
       <child link="S2_link"/>
       <axis xyz="0 1 0"/>
-      <limit lower="-1.57" upper="1.57" effort="1.0" velocity="1.57"/>
+      <limit lower="-1.57" upper="2.356" effort="1.0" velocity="1.57"/>
       <dynamics damping="0.1" friction="0.1"/>
     </joint>
 
@@ -111,12 +114,15 @@
     </link>
 
     <!-- S3 Joint - Elbow pitch (maps to Servo ID 3) -->
+    <!-- Real servo travel ~270 deg, centred on forearm colinear with upper arm
+         (S3=0). Limits +/-135 deg (+/-2.356 rad) so the elbow can fold the
+         forearm down far enough to reach low/floor targets. -->
     <joint name="S3_joint" type="revolute">
       <origin xyz="0.11 0 0" rpy="0 1.5708 0"/>
       <parent link="S2_link"/>
       <child link="S3_link"/>
       <axis xyz="0 1 0"/>
-      <limit lower="-1.57" upper="1.57" effort="1.0" velocity="1.57"/>
+      <limit lower="-2.356" upper="2.356" effort="1.0" velocity="1.57"/>
       <dynamics damping="0.1" friction="0.1"/>
     </joint>
 
