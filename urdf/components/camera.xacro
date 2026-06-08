@@ -38,24 +38,38 @@
       </inertial>
     </link>
 
-    <!-- Left camera optical frame.
-         Ignition's camera images along the frame +X. rpy="0 0 0" points
-         +X forward (the view direction) and rolls -90 deg about it. -->
-    <joint name="camera_left_optical_joint" type="fixed">
+    <!-- Camera BODY frames (REP-103: +X forward). Ignition's camera looks along
+         the +X of the frame the <sensor> is attached to, so the gz sensors mount
+         here to look forward. -->
+    <joint name="camera_left_joint" type="fixed">
       <origin xyz="0.045 0.0275 0" rpy="0 0 0"/>
       <parent link="camera_link"/>
-      <child link="camera_left_optical_frame"/>
+      <child link="camera_left_link"/>
     </joint>
+    <link name="camera_left_link"/>
 
-    <link name="camera_left_optical_frame"/>
-
-    <!-- Right camera optical frame (see left frame note). -->
-    <joint name="camera_right_optical_joint" type="fixed">
+    <joint name="camera_right_joint" type="fixed">
       <origin xyz="0.045 -0.0275 0" rpy="0 0 0"/>
       <parent link="camera_link"/>
+      <child link="camera_right_link"/>
+    </joint>
+    <link name="camera_right_link"/>
+
+    <!-- True OPTICAL frames (REP-103: +Z forward, +X right, +Y down). These are
+         the frame_id for images / disparity / point clouds, so OpenCV's
+         reprojectImageTo3D output (z-forward) is correctly oriented. -->
+    <joint name="camera_left_optical_joint" type="fixed">
+      <origin xyz="0 0 0" rpy="${-pi/2} 0 ${-pi/2}"/>
+      <parent link="camera_left_link"/>
+      <child link="camera_left_optical_frame"/>
+    </joint>
+    <link name="camera_left_optical_frame"/>
+
+    <joint name="camera_right_optical_joint" type="fixed">
+      <origin xyz="0 0 0" rpy="${-pi/2} 0 ${-pi/2}"/>
+      <parent link="camera_right_link"/>
       <child link="camera_right_optical_frame"/>
     </joint>
-
     <link name="camera_right_optical_frame"/>
 
     <!-- Gazebo color -->
@@ -66,8 +80,9 @@
     <!-- Gazebo Stereo Camera Sensors (simulation only) -->
     <!-- Matches IMX219-83 hardware: 640×360, 30fps, 73° FOV, 60mm baseline -->
 
-    <!-- LEFT CAMERA -->
-    <gazebo reference="camera_left_optical_frame">
+    <!-- LEFT CAMERA — sensor on the body frame (looks +X forward); images tagged
+         with the optical frame via ignition_frame_id. -->
+    <gazebo reference="camera_left_link">
       <sensor name="stereo_camera_left" type="camera">
         <topic>stereo_camera/left/image_raw</topic>
         <ignition_frame_id>camera_left_optical_frame</ignition_frame_id>
@@ -103,8 +118,9 @@
       </sensor>
     </gazebo>
 
-    <!-- RIGHT CAMERA -->
-    <gazebo reference="camera_right_optical_frame">
+    <!-- RIGHT CAMERA — sensor on the body frame (looks +X forward); images tagged
+         with the optical frame via ignition_frame_id. -->
+    <gazebo reference="camera_right_link">
       <sensor name="stereo_camera_right" type="camera">
         <topic>stereo_camera/right/image_raw</topic>
         <ignition_frame_id>camera_right_optical_frame</ignition_frame_id>
