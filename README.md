@@ -32,7 +32,7 @@ base_footprint → base_link → chassis ─┬─ jetank_arm (S1..S5)
 
 ## ⚠️ Known issues (flagged for maintainer)
 
-These are **verified in sim** and need URDF edits:
+These are **verified in sim**:
 
 1. **IMU moves with the arm (matches hardware — not a URDF bug).**
    `jetank_ros2_control.urdf.xacro:71` mounts `imu_sensor` on `camera_link`, a
@@ -43,16 +43,7 @@ These are **verified in sim** and need URDF edits:
    need a base-fixed IMU for continuous fusion, that's a *hardware* change (relocate
    the sensor), not a model fix.
 
-2. **Camera gz sensor referenced to the optical frame.** `components/camera.xacro:68,105`
-   put the `<sensor type="camera">` on `camera_{left,right}_optical_frame`, which
-   carries the standard optical rotation `rpy="-1.5708 0 -1.5708"`. Ignition
-   cameras image along the frame **+X**, but optical +X points to the robot's
-   right → the simulated image is ~90° off in RViz. **Fix:** reference the
-   `<sensor>` to a forward‑X frame (e.g. `camera_link` or a dedicated
-   `camera_*_frame`) and keep `<ignition_frame_id>` on the optical frame so ROS
-   images stay in the optical convention.
-
-3. **Verify two mounts.**
+2. **Verify two mounts.**
    - `components/lidar.xacro` `laser_joint rpy="0 0 π"` rotates the scan's zero
      reference 180° (full 360° coverage is intact, but the angle origin is
      mirrored — confirm it matches the physical RPLidar zero).
