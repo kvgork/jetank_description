@@ -6,6 +6,12 @@
   <!-- Arguments -->
   <xacro:arg name="use_sim" default="false"/>
   <xacro:arg name="use_ros2_control" default="true"/>
+  <!-- Hardware backend for the NON-sim path: 'mock' (mock_components/GenericSystem,
+       no motors move) or 'serial' (real JetankSerialHardware Feetech servos).
+       Ignored when use_sim:=true (Gazebo IgnitionSystem is used instead).
+       Default 'mock' is the SAFE default: a bare `hardware:=mock` must never
+       drive real motors. -->
+  <xacro:arg name="hardware" default="mock"/>
 
   <!-- Import component macros -->
   <xacro:include filename="$(find jetank_description)/urdf/components/arm.xacro"/>
@@ -72,7 +78,7 @@
 
   <!-- ros2_control (conditional) -->
   <xacro:if value="$(arg use_ros2_control)">
-    <xacro:jetank_ros2_control use_sim="$(arg use_sim)"/>
+    <xacro:jetank_ros2_control use_sim="$(arg use_sim)" hardware="$(arg hardware)"/>
   </xacro:if>
 
   <!-- Gazebo properties -->
