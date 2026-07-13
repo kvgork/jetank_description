@@ -64,8 +64,8 @@ What it provides is the URDF/xacro robot model (primitive geometry, no meshes), 
 |---|---|---|
 | Top-level entrypoint | `urdf/jetank_ros2_control.urdf.xacro` | Main robot model with `ros2_control` integration |
 | Robot/component xacros | `urdf/jetank.xacro`, `urdf/components/{arm,gripper,wheels,camera,lidar,imu}.xacro` | Component macros |
-| Sensor gz blocks | `urdf/components/{camera,lidar,imu}.xacro`, `urdf/sensors.gazebo` | Ignition `<sensor>` definitions |
-| Materials / properties | `urdf/materials.xacro`, `urdf/properties.xacro`, `urdf/jetank_parameters.xacro`, `urdf/macros.xacro` | Shared xacro definitions |
+| Sensor gz blocks | `urdf/components/{camera,lidar,imu}.xacro` | Ignition `<sensor>` definitions |
+| Materials / properties | `urdf/properties.xacro` | Shared xacro definitions |
 
 The CMakeLists installs `urdf/`, `meshes/`, `launch/`, `config/` only if present; only `urdf/` exists in the tree.
 
