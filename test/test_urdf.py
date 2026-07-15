@@ -1,7 +1,8 @@
 # Copyright 2024 koen
 #
 # Licensed under the MIT License.
-"""Exercise the package deliverable: expand the xacro model to valid URDF.
+"""
+Exercise the package deliverable: expand the xacro model to valid URDF.
 
 These tests run ``xacro`` on the real robot description files shipped by this
 package and assert the resulting URDF parses as XML, has a ``<robot>`` root, and
@@ -29,7 +30,8 @@ def _process(filename, mappings=None):
 
 
 def test_top_entrypoint_expands_without_ros2_control():
-    """The documented top entrypoint expands; ros2_control off keeps it self-contained.
+    """
+    The documented top entrypoint expands; ros2_control off keeps it self-contained.
 
     With use_ros2_control:=false the model does not pull in the sibling
     jetank_motor_control package, so this exercises only jetank_description.
