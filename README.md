@@ -54,7 +54,7 @@ These are **verified in sim**:
 
 ## ROS 2 API
 
-`jetank_description` is a **pure robot-description package** (ament_cmake). It contains **no runtime nodes, executables, launch files, or message/service/action definitions of its own** — there is no `src/`, `launch/`, `scripts/`, Python module, or `msg/`/`srv/`/`action/` directory. It therefore publishes/subscribes to **no ROS 2 topics directly** and exposes no services or actions.
+`jetank_description` is a **pure robot-description package** (ament_cmake). It contains **no runtime nodes, executables, or message/service/action definitions of its own** — there is no `src/`, `scripts/`, Python module, or `msg/`/`srv/`/`action/` directory. Its single launch file, `launch/robot_description.launch.py`, is the canonical include for publishing the model: it expands the top entrypoint xacro (mapping launch args 1:1 onto the xacro args below) and starts `robot_state_publisher`. Beyond that node the package publishes/subscribes to **no ROS 2 topics directly** and exposes no services or actions.
 
 What it provides is the URDF/xacro robot model (primitive geometry, no meshes), consumed by `robot_state_publisher`, RViz, MoveIt 2 and Gazebo (Fortress/Ignition) in sibling packages.
 
@@ -63,19 +63,19 @@ What it provides is the URDF/xacro robot model (primitive geometry, no meshes), 
 | Type | Path | Notes |
 |---|---|---|
 | Top-level entrypoint | `urdf/jetank_ros2_control.urdf.xacro` | Main robot model with `ros2_control` integration |
-| Robot/component xacros | `urdf/jetank.xacro`, `urdf/components/{arm,gripper,wheels,camera,lidar,imu}.xacro` | Component macros |
-| Sensor gz blocks | `urdf/components/{camera,lidar,imu}.xacro`, `urdf/sensors.gazebo` | Ignition `<sensor>` definitions |
-| Materials / properties | `urdf/materials.xacro`, `urdf/properties.xacro`, `urdf/jetank_parameters.xacro`, `urdf/macros.xacro` | Shared xacro definitions |
-| Static test URDF | `urdf/jetank_test.urdf`, `urdf/moveit_urdf.urdf` | Pre-expanded URDF snapshots |
+| Component xacros | `urdf/components/{arm,gripper,wheels,camera,lidar,imu}.xacro` | Component macros |
+| Sensor gz blocks | `urdf/components/{camera,lidar,imu}.xacro` | Ignition `<sensor>` definitions |
+| Canonical include | `launch/robot_description.launch.py` | Expands the entrypoint + starts `robot_state_publisher` |
 
-The CMakeLists installs `urdf/`, `meshes/`, `launch/`, `config/` only if present; only `urdf/` exists in the tree.
+The CMakeLists installs `urdf/`, `meshes/`, `launch/`, `config/` only if present; `urdf/` and `launch/` exist in the tree.
 
 ### Top-level xacro arguments (`urdf/jetank_ros2_control.urdf.xacro`)
 
 | Arg | Default | Effect |
 |---|---|---|
-| `use_sim` | `false` | `true` ⇒ `ign_ros2_control/IgnitionSystem`; `false` ⇒ `jetank_motor_control/JetankSerialHardware` hardware interface |
+| `use_sim` | `false` | `true` ⇒ `ign_ros2_control/IgnitionSystem`; `false` ⇒ the non-sim backend selected by `hardware` |
 | `use_ros2_control` | `true` | Includes the `ros2_control` block + `jetank_motor_control/config/ros2_control.xacro` |
+| `hardware` | `mock` | Non-sim backend: `mock` ⇒ `mock_components/GenericSystem` (no motors move); `serial` ⇒ `jetank_motor_control/JetankSerialHardware`. Ignored when `use_sim:=true` |
 
 ### Sensor topics declared in the model (Gazebo/Ignition transport)
 
@@ -96,16 +96,12 @@ ROS 2 message types (e.g. `sensor_msgs/LaserScan`, `sensor_msgs/Imu`, `sensor_ms
 xacro models to URDF via the `xacro` API (no ROS runtime) and asserts on the
 resulting XML:
 
-- **`test_jetank_xacro_expands_to_robot`** — `jetank.xacro` expands to a
-  non-empty `<robot>` with core/component links (`base_link`, `chassis`,
-  `imu_link`, `camera_base_plate_link`, `arm_base_link`, `gripper_base_link`,
-  `laser`) and exactly **6** `*_wheel` links.
 - **`test_top_entrypoint_expands_without_ros2_control`** — the top entrypoint
   `jetank_ros2_control.urdf.xacro` (with `use_ros2_control:=false`, so it stays
   self-contained and pulls in no sibling package) expands and contains the core
-  frames plus the full `S1..S5` arm chain.
-- **`test_robot_name_is_jetank`** (parametrized over both entrypoints) — the
-  `<robot>` root is named `jetank` (the name consumed by RViz/MoveIt/Gazebo).
+  frames, the full `S1..S5` arm chain and exactly **4** `*_wheel_link` links.
+- **`test_robot_name_is_jetank`** — the `<robot>` root is named `jetank` (the
+  name consumed by RViz/MoveIt/Gazebo).
 
 Wired via `ament_cmake_pytest` in `CMakeLists.txt`.
 

@@ -11,6 +11,10 @@
 
   <!-- URDF/xacro dependencies -->
   <exec_depend>xacro</exec_depend>
+  <!-- jetank_ros2_control.urdf.xacro includes
+       $(find jetank_motor_control)/config/ros2_control.xacro when
+       use_ros2_control:=true (the default). -->
+  <exec_depend>jetank_motor_control</exec_depend>
   <exec_depend>urdf</exec_depend>
   <exec_depend>robot_state_publisher</exec_depend>
   <exec_depend>joint_state_publisher</exec_depend>

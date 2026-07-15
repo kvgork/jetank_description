@@ -14,6 +14,7 @@ foreach(_dir urdf meshes launch config)
   if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${_dir}")
     install(DIRECTORY ${_dir}/
       DESTINATION share/${PROJECT_NAME}/${_dir}
+      PATTERN "__pycache__" EXCLUDE
     )
   endif()
 endforeach()
